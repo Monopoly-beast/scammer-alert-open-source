@@ -127,7 +127,7 @@ function App() {
           loading={loading}
         />
 
-        {/* Statistics */}
+        {/* Statistics 
         <div className="mt-16 bg-white rounded-xl shadow-lg p-6 sm:p-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
             <div>
@@ -148,7 +148,7 @@ function App() {
             </div>
           </div>
         </div>
-
+*/}
         {/* Call to Action */}
         <div className="mt-16 bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 sm:p-8 text-white text-center">
           <h3 className="text-xl sm:text-2xl font-bold mb-4">Help Protect Your Community</h3>
