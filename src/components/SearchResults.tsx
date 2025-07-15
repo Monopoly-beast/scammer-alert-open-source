@@ -258,6 +258,8 @@ interface ExpandedCardModalProps {
 }
 
 const ExpandedCardModal: React.FC<ExpandedCardModalProps> = ({ report, onClose }) => {
+  // FIX: Always define votes with fallback to avoid ReferenceError!
+  const votes = report.votes || { yes: 0, no: 0, voters: [] };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
