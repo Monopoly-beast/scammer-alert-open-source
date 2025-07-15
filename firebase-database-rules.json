@@ -1,0 +1,41 @@
+{
+  "rules": {
+    "reports": {
+      ".read": true,
+      ".write": true,
+      "$reportId": {
+        ".validate": "newData.hasChildren(['phoneNumber', 'category', 'approved', 'reportCount', 'createdAt', 'updatedAt'])",
+        "phoneNumber": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "name": {
+          ".validate": "newData.isString() || !newData.exists()"
+        },
+        "category": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "description": {
+          ".validate": "newData.isString() || !newData.exists()"
+        },
+        "screenshots": {
+          ".validate": "!newData.exists() || newData.hasChildren()",
+          "$index": {
+            ".validate": "newData.isString()"
+          }
+        },
+        "approved": {
+          ".validate": "newData.isBoolean()"
+        },
+        "reportCount": {
+          ".validate": "newData.isNumber() && newData.val() >= 1"
+        },
+        "createdAt": {
+          ".validate": "newData.isNumber()"
+        },
+        "updatedAt": {
+          ".validate": "newData.isNumber()"
+        }
+      }
+    }
+  }
+}
