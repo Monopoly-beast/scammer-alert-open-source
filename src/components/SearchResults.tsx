@@ -156,7 +156,7 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
 
       {/* Voting Section */}
       <div className="bg-amber-50 border-b border-amber-200 px-3 py-2">
-        <p className="text-xs text-amber-800 font-medium mb-2">Is this scammer with you?</p>
+        <p className="text-xs text-amber-800 font-medium mb-2">Is this SCAMMER scam with you?</p>
         <div className="flex items-center gap-2">
           <button
             onClick={(e) => handleVote('yes', e)}
