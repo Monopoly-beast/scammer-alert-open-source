@@ -94,17 +94,16 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
     return userId;
   };
 
-  const handleVote = async (voteType: 'yes' | 'no', e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card expansion
-    
+  const handleVoteYes = async (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (hasVoted || isVoting) return;
-    
+
     setIsVoting(true);
     const userId = getUserId();
-    
+
     try {
       const currentVotes = report.votes || { yes: 0, no: 0, voters: [] };
-      
+
       // Check if user already voted
       if (currentVotes.voters.includes(userId)) {
         setHasVoted(true);
@@ -113,8 +112,8 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
       }
 
       const updatedVotes = {
-        yes: voteType === 'yes' ? currentVotes.yes + 1 : currentVotes.yes,
-        no: voteType === 'no' ? currentVotes.no + 1 : currentVotes.no,
+        yes: currentVotes.yes + 1,
+        no: 0, // always 0, since no "No" vote option
         voters: [...currentVotes.voters, userId]
       };
 
@@ -133,11 +132,11 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
   };
 
   const votes = report.votes || { yes: 0, no: 0, voters: [] };
-  const totalVotes = votes.yes + votes.no;
-  const yesPercentage = totalVotes > 0 ? (votes.yes / totalVotes) * 100 : 0;
+  const totalVotes = votes.yes; // only yes votes
+  const yesPercentage = 100; // always 100% since only yes votes
 
   return (
-    <div 
+    <div
       className="bg-white rounded-lg shadow-md border border-red-200 overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
       onClick={onToggle}
     >
@@ -159,7 +158,7 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
         <p className="text-xs text-amber-800 font-medium mb-2">Is this SCAMMER scam with you?</p>
         <div className="flex items-center gap-2">
           <button
-            onClick={(e) => handleVote('yes', e)}
+            onClick={handleVoteYes}
             disabled={hasVoted || isVoting}
             className="flex items-center gap-1 bg-red-100 hover:bg-red-200 disabled:bg-gray-100 text-red-700 disabled:text-gray-500 px-2 py-1 rounded-full text-xs font-medium transition-colors flex-1 justify-center"
           >
@@ -167,26 +166,17 @@ const ScammerCard: React.FC<ScammerCardProps> = ({ report, onToggle }) => {
             <span className="hidden xs:inline">Yes</span>
             <span className="ml-1">({votes.yes})</span>
           </button>
-          <button
-            onClick={(e) => handleVote('no', e)}
-            disabled={hasVoted || isVoting}
-            className="flex items-center gap-1 bg-green-100 hover:bg-green-200 disabled:bg-gray-100 text-green-700 disabled:text-gray-500 px-2 py-1 rounded-full text-xs font-medium transition-colors flex-1 justify-center"
-          >
-            <ThumbsDown className="h-3 w-3" />
-            <span className="hidden xs:inline">No</span>
-            <span className="ml-1">({votes.no})</span>
-          </button>
         </div>
         {totalVotes > 0 && (
           <div className="mt-2">
             <div className="bg-gray-200 rounded-full h-1">
-              <div 
+              <div
                 className="bg-red-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${yesPercentage}%` }}
+                style={{ width: `100%` }}
               ></div>
             </div>
             <p className="text-xs text-gray-600 mt-1 text-center">
-              {Math.round(yesPercentage)}% confirmed ({totalVotes} votes)
+              100% confirmed ({totalVotes} vote{totalVotes !== 1 ? 's' : ''})
             </p>
           </div>
         )}
