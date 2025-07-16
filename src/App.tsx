@@ -162,6 +162,19 @@ function App() {
             <Plus className="h-5 w-5" />
             Report a Scammer
           </button>
+          
+          {/* Contact Email for Incorrect Reports */}
+          <div className="mt-6 pt-4 border-t border-red-400">
+            <p className="text-red-100 text-sm mb-2">
+              If your information was incorrectly reported, please contact us:
+            </p>
+            <a 
+              href="mailto:monoploy1@duck.com" 
+              className="text-white font-semibold hover:text-red-100 transition-colors underline"
+            >
+              monoploy1@duck.com
+            </a>
+          </div>
         </div>
       </div>
 

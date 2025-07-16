@@ -37,6 +37,20 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results, hasSearched, loa
           <CheckCircle className="mx-auto h-16 w-16 text-green-500 mb-4" />
           <h3 className="text-xl font-semibold text-green-800 mb-2">Clean – No Scammer Found</h3>
           <p className="text-green-700">No reports found matching your search criteria. This appears to be clean.</p>
+          
+          {/* Contact Email for Incorrect Reports */}
+          <div className="mt-2 pt-2 border-t border-gray-100">
+            <p className="text-xs text-gray-500 text-center">
+              Incorrectly reported? Contact: 
+              <a 
+                href="mailto:monoploy1@duck.com" 
+                className="text-blue-600 hover:text-blue-800 ml-1 font-medium"
+                onClick={(e) => e.stopPropagation()}
+              >
+                monoploy1@duck.com
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -377,6 +391,19 @@ const ExpandedCardModal: React.FC<ExpandedCardModalProps> = ({ report, onClose }
             <div className="flex items-center justify-center gap-2 bg-green-50 text-green-800 py-3 px-4 rounded-lg">
               <CheckCircle className="h-5 w-5" />
               <span className="font-medium">Verified by Admin</span>
+            </div>
+            
+            {/* Contact Email for Incorrect Reports */}
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600 mb-2">
+                If this information is incorrect, please contact us:
+              </p>
+              <a 
+                href="mailto:monoploy1@duck.com" 
+                className="text-blue-600 hover:text-blue-800 font-medium underline"
+              >
+                monoploy1@duck.com
+              </a>
             </div>
           </div>
         </div>

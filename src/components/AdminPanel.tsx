@@ -13,6 +13,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [password, setPassword] = useState('');
   const [reports, setReports] = useState<ScammerReport[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'approved'>('all');
+  const [filteredReports, setFilteredReports] = useState<ScammerReport[]>([]);
 
   const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123';
 
@@ -35,8 +38,32 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
 
       return () => unsubscribe();
     }
-  }, [isAuthenticated]);
 
+
+  // Filter reports based on search and status
+  useEffect(() => {
+    let filtered = reports;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(report => 
+        report.phoneNumber.toLowerCase().includes(query) ||
+        report.name?.toLowerCase().includes(query) ||
+        report.category.toLowerCase().includes(query) ||
+        report.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by status
+    if (filterStatus === 'pending') {
+      filtered = filtered.filter(report => !report.approved);
+    } else if (filterStatus === 'approved') {
+      filtered = filtered.filter(report => report.approved);
+    }
+
+    setFilteredReports(filtered);
+  }, [reports, searchQuery, filterStatus]);
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
@@ -105,8 +132,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     );
   }
 
-  const unapprovedReports = reports.filter(report => !report.approved);
-  const approvedReports = reports.filter(report => report.approved);
+  const unapprovedReports = filteredReports.filter(report => !report.approved);
+  const approvedReports = filteredReports.filter(report => report.approved);
+  const allUnapproved = reports.filter(report => !report.approved);
+  const allApproved = reports.filter(report => report.approved);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -136,18 +165,59 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Pending Approval</h3>
-            <p className="text-3xl font-bold text-orange-600">{unapprovedReports.length}</p>
+            <p className="text-3xl font-bold text-orange-600">{allUnapproved.length}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Approved</h3>
-            <p className="text-3xl font-bold text-green-600">{approvedReports.length}</p>
+            <p className="text-3xl font-bold text-green-600">{allApproved.length}</p>
           </div>
+        </div>
+
+        {/* Search and Filter Section */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <input
+                type="text"
+                placeholder="Search by phone, name, category, or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            
+            {/* Status Filter */}
+            <div className="sm:w-48">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as 'all' | 'pending' | 'approved')}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Reports</option>
+                <option value="pending">Pending Only</option>
+                <option value="approved">Approved Only</option>
+              </select>
+            </div>
+          </div>
+          
+          {/* Search Results Count */}
+          {(searchQuery.trim() || filterStatus !== 'all') && (
+            <div className="mt-4 text-sm text-gray-600">
+              Showing {filteredReports.length} of {reports.length} reports
+              {searchQuery.trim() && (
+                <span> matching "{searchQuery}"</span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="space-y-8">
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Pending Approval ({unapprovedReports.length})
+              Pending Approval ({unapprovedReports.length}
+              {(searchQuery.trim() || filterStatus !== 'all') && ` of ${allUnapproved.length}`})
             </h2>
             <div className="space-y-4">
               {unapprovedReports.map((report) => (
@@ -161,7 +231,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               ))}
               {unapprovedReports.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  No pending reports
+                  {(searchQuery.trim() || filterStatus === 'approved') ? 'No pending reports found' : 'No pending reports'}
                 </div>
               )}
             </div>
@@ -169,7 +239,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
 
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Approved Reports ({approvedReports.length})
+              Approved Reports ({approvedReports.length}
+              {(searchQuery.trim() || filterStatus !== 'all') && ` of ${allApproved.length}`})
             </h2>
             <div className="space-y-4">
               {approvedReports.map((report) => (
@@ -183,7 +254,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               ))}
               {approvedReports.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  No approved reports
+                  {(searchQuery.trim() || filterStatus === 'pending') ? 'No approved reports found' : 'No approved reports'}
                 </div>
               )}
             </div>
