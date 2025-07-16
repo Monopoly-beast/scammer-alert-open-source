@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Eye, Check, X, Edit, Trash2, Phone, User, Tag, Calendar, Camera, ArrowLeft } from 'lucide-react';
+import { Shield, Eye, Check, X, Edit, Trash2, Phone, User, Tag, Calendar, Camera, ArrowLeft, Search } from 'lucide-react';
 import { ref, onValue, update, remove } from 'firebase/database';
 import { database } from '../firebase';
 import { ScammerReport } from '../types';
@@ -172,6 +172,46 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Approved</h3>
             <p className="text-3xl font-bold text-green-600">{allApproved.length}</p>
           </div>
+        </div>
+
+        {/* Search and Filter Section */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+              <input
+                type="text"
+                placeholder="Search by phone, name, category, or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            
+            {/* Status Filter */}
+            <div className="sm:w-48">
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as 'all' | 'pending' | 'approved')}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Reports</option>
+                <option value="pending">Pending Only</option>
+                <option value="approved">Approved Only</option>
+              </select>
+            </div>
+          </div>
+          
+          {/* Search Results Count */}
+          {(searchQuery.trim() || filterStatus !== 'all') && (
+            <div className="mt-4 text-sm text-gray-600">
+              Showing {filteredReports.length} of {reports.length} reports
+              {searchQuery.trim() && (
+                <span> matching "{searchQuery}"</span>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="space-y-8">
