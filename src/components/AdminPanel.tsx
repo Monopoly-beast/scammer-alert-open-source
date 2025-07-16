@@ -217,7 +217,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
         <div className="space-y-8">
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Pending Approval ({unapprovedReports.length})
+              Pending Approval ({unapprovedReports.length}
+              {(searchQuery.trim() || filterStatus !== 'all') && ` of ${allUnapproved.length}`})
             </h2>
             <div className="space-y-4">
               {unapprovedReports.map((report) => (
@@ -231,7 +232,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               ))}
               {unapprovedReports.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  No pending reports
+                  {(searchQuery.trim() || filterStatus === 'approved') ? 'No pending reports found' : 'No pending reports'}
                 </div>
               )}
             </div>
@@ -239,7 +240,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
 
           <div>
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
-              Approved Reports ({approvedReports.length})
+              Approved Reports ({approvedReports.length}
+              {(searchQuery.trim() || filterStatus !== 'all') && ` of ${allApproved.length}`})
             </h2>
             <div className="space-y-4">
               {approvedReports.map((report) => (
@@ -253,7 +255,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
               ))}
               {approvedReports.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  No approved reports
+                  {(searchQuery.trim() || filterStatus === 'pending') ? 'No approved reports found' : 'No approved reports'}
                 </div>
               )}
             </div>
