@@ -40,6 +40,31 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     }
   }, [isAuthenticated]);
 
+  // Filter reports based on search and status
+  useEffect(() => {
+    let filtered = reports;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(report => 
+        report.phoneNumber.toLowerCase().includes(query) ||
+        report.name?.toLowerCase().includes(query) ||
+        report.category.toLowerCase().includes(query) ||
+        report.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by status
+    if (filterStatus === 'pending') {
+      filtered = filtered.filter(report => !report.approved);
+    } else if (filterStatus === 'approved') {
+      filtered = filtered.filter(report => report.approved);
+    }
+
+    setFilteredReports(filtered);
+  }, [reports, searchQuery, filterStatus]);
+  
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
@@ -108,8 +133,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     );
   }
 
-  const unapprovedReports = reports.filter(report => !report.approved);
-  const approvedReports = reports.filter(report => report.approved);
+  const unapprovedReports = filteredReports.filter(report => !report.approved);
+  const approvedReports = filteredReports.filter(report => report.approved);
+  const allUnapproved = reports.filter(report => !report.approved);
+  const allApproved = reports.filter(report => report.approved);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -139,11 +166,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Pending Approval</h3>
-            <p className="text-3xl font-bold text-orange-600">{unapprovedReports.length}</p>
+            <p className="text-3xl font-bold text-orange-600">{allUnapproved.length}</p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Approved</h3>
-            <p className="text-3xl font-bold text-green-600">{approvedReports.length}</p>
+            <p className="text-3xl font-bold text-green-600">{allApproved.length}</p>
           </div>
         </div>
 
