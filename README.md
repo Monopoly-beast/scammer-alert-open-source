@@ -105,9 +105,9 @@ npm run dev
 5. Submit a pull request
 
 ### For Live visit 
-```
+
 https://scammer-report.netlify.app/
-```
+
 
 ## License
 
